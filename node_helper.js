@@ -6,8 +6,12 @@
  */
 
 var NodeHelper = require("node_helper");
-
+var btc=require('./btc')
 module.exports = NodeHelper.create({
+        start: function(){
+            var self = this
+	    btc.init(self)
+        },
 
 	// Override socketNotificationReceived method.
 

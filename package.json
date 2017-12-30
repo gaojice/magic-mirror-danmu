@@ -1,0 +1,23 @@
+{
+  "name": "danmu",
+  "version": "1.0.0",
+  "description": "",
+  "main": "danmu.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gaojice/magic-mirror-danmu.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gaojice/magic-mirror-danmu/issues"
+  },
+  "homepage": "https://github.com/gaojice/magic-mirror-danmu#readme",
+  "dependencies": {
+    "pako": "^1.0.6",
+    "ws": "^3.3.3"
+  }
+}
