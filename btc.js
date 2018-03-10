@@ -2,61 +2,42 @@ const moment = require('moment');
 const WebSocket = require('ws');
 const pako = require('pako');
 
-const WS_URL = 'wss://api.huobi.pro/ws';
+const WS_URL = 'wss://real.okex.com:10441/websocket';
 
 
 var orderbook = {};
-var emmiter = {};
 exports.OrderBook = orderbook;
-exports.emmiter = emmiter;
-function handle(data) {
-    // console.log('received', data.ch, 'data.ts', data.ts, 'crawler.ts', moment().format('x'));
-    let symbol = data.ch.split('.')[1];
-    let channel = data.ch.split('.')[2];
-    switch (channel) {
-        case 'depth':
-            orderbook[symbol] = data.tick;
-            break;
-        case 'kline':
-            console.log('kline', data.tick);
-            emmiter.sendSocketNotification("danmu-NOTIFICATION_TEST", {"text":Math.round(data.tick.close*0.51077801*6.5) + "元"})
-            break;
-    }
-}
 
 function subscribe(ws) {
     var symbols = ['btcusdt'];
     // 订阅K线
     for (let symbol of symbols) {
-        ws.send(JSON.stringify({
-            "sub": `market.${symbol}.kline.1min`,
-            "id": `${symbol}`
-        }));
+        ws.send("{'event':'addChannel','channel':'ok_sub_spot_ugc_usdt_ticker'}");
     }
 }
 
 function init(emmit) {
-    emmiter = emmit
     var ws = new WebSocket(WS_URL);
     ws.on('open', () => {
         console.log('open');
         subscribe(ws);
     });
     ws.on('message', (data) => {
-        let text = pako.inflate(data, {
-            to: 'string'
-        });
-        let msg = JSON.parse(text);
+      try{
+        console.log(data)
+        let msg = JSON.parse(data);
         if (msg.ping) {
             ws.send(JSON.stringify({
                 pong: msg.ping
             }));
-        } else if (msg.tick) {
-           // console.log(msg);
-            handle(msg);
+        } else if (msg[0].data) {
+           emmit.sendSocketNotification("danmu-NOTIFICATION_TEST", {"text": msg[0].data.last + " USDT"})
         } else {
             console.log(text);
         }
+      } catch (e) {
+	console.log(e)
+      }
     });
     ws.on('close', () => {
         console.log('close');
